@@ -1,21 +1,17 @@
 #!/usr/bin/python3
-'''Fabric script to generate .tgz archive'''
-
 from fabric.api import local
-from datetime import datetime
+from time import strftime
+from datetime import date
 
-from fabric.decorators import runs_once
-
-
-@runs_once
 def do_pack():
-    '''generates .tgz archive from the contents of the web_static folder'''
-    local("mkdir -p versions")
-    path = ("versions/web_static_{}.tgz"
-            .format(datetime.strftime(datetime.now(), "%Y%m%d%H%M%S")))
-    result = local("tar -cvzf {} web_static"
-                   .format(path))
+    """ This Script generates archive the contents of web_static """
+    file_Name = strftime("%Y%m%d%H%M%S")
+    try:
+        local("mkdir -p versions")
+        local("tar -czvf versions/web_static_{}.tgz web_static/"
+              .format(file_Name))
+        return "versions/web_static_{}.tgz".format(file_Name)
 
-    if result.failed:
+    except Exception as e:
+        print("Exception occurred in the priocess of creating archive: ", e)
         return None
-    return path
